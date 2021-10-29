@@ -168,6 +168,10 @@ def bookAdvisors(current_user,user_id,advisor_id):
                 return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Login Required"}),status=400)
             if current_user.uid != user_id:
                 return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Invalid Token"}),status=400)    
+
+            advisor_check = advisorData.query.filter_by(aid=advisor_id).first()
+            if advisor_check is None:
+                return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Advisor Not Found. Please Enter Correct ID"}),status=400)  
             booking_date = request.form['booking_date']
             format = "%d-%m-%Y"
             res = True
