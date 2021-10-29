@@ -141,6 +141,8 @@ def showAdvisors(current_user,user_id):
     try:
         if not current_user.uid:
             return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Login Required"}),status=400)
+        if current_user.uid != user_id:
+            return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Invalid Token"}),status=400)
         user = userData.query.filter_by(uid=user_id).first() 
         if not user:
             return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"User Id Missing"}),status=400)
@@ -162,6 +164,10 @@ def showAdvisors(current_user,user_id):
 def bookAdvisors(current_user,user_id,advisor_id):
     if request.method=='POST':
         try:
+            if not current_user.uid:
+                return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Login Required"}),status=400)
+            if current_user.uid != user_id:
+                return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Invalid Token"}),status=400)    
             booking_date = request.form['booking_date']
             format = "%d-%m-%Y"
             res = True
@@ -188,12 +194,32 @@ def bookAdvisors(current_user,user_id,advisor_id):
                 return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Please Enter Correct Date Format. (dd-mm-yyyy) "}),status=400)
         except Exception as e:
             print(e)
-            return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Please Enter Correct Date Format. (dd-mm-yyyy) "}),status=400)
+            return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Internal Error"}),status=400)
 
 
-# @app.route('/user/<user-id>/advisor/booking')
-# def showAdvisors(current_user,user_id):
-#     return
+@app.route('/user/<user_id>/advisor/booking',methods=['GET'])
+@token_required
+def bookedCalls(current_user,user_id):
+    try:
+        if not current_user.uid:
+            return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Login Required"}),status=400)
+        if current_user.uid != user_id:
+            return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Invalid Token"}),status=400)
+        booked = bookingData.query.filter_by(uid=user_id).all()
+        outJson = {}
+        format = "%d-%m-%Y"
+        for b in booked:
+            advisor = advisorData.query.filter_by(aid=b.aid).first()
+            image_path = advisor.image # point to your image location
+            encoded_img = get_response_image(image_path)
+            b_Date = str(b.booking_time)
+            temp = {b.bid:{"Advisor_name":advisor.name,"Advisor_profile_pic":encoded_img,"Advisor_ID":b.aid,"Booking_time":b_Date,"Booking_ID":b.bid}}
+            outJson.update(temp)
+        # print(outJson)
+        return Response(json.dumps(outJson),status=200)
+    except Exception as e:
+        print(e)
+        return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Internal Error"}),status=400)
 
 
 
