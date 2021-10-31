@@ -1,5 +1,5 @@
 from enum import unique
-from flask import Flask,request,redirect,session,jsonify,Response,make_response
+from flask import Flask,request,redirect,session,jsonify,Response,make_response,render_template
 from werkzeug.utils import secure_filename
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS, cross_origin
@@ -14,6 +14,9 @@ import io
 from base64 import encodebytes
 from PIL import Image
 from datetime import datetime,date
+import markdown
+import markdown.extensions.fenced_code
+from pygments.formatters import HtmlFormatter
 
 
 app = Flask(__name__)
@@ -226,6 +229,9 @@ def bookedCalls(current_user,user_id):
         return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Internal Error"}),status=400)
 
 
+@app.route("/")
+def index():
+    return render_template("index.html")
 
 if __name__ == '__main__':
     app.run(debug=False)
