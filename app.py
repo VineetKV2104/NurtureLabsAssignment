@@ -229,7 +229,7 @@ def bookedCalls(current_user,user_id):
         return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Internal Error"}),status=400)
 
 
-@app.route("/")
+@app.route("/",methods=['GET'])
 def index():
     return render_template("index.html")
 
