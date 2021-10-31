@@ -14,9 +14,7 @@ import io
 from base64 import encodebytes
 from PIL import Image
 from datetime import datetime,date
-import markdown
-import markdown.extensions.fenced_code
-from pygments.formatters import HtmlFormatter
+
 
 
 app = Flask(__name__)
