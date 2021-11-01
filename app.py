@@ -130,14 +130,14 @@ def login():
         if email == '' or password == '':       
             return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Please Provide All fields"}),status=400)
         if not re.search(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)",email):
-            return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Invalid Email"}),status=400)
+            return Response(json.dumps({"status":"401_AUTHENTICATION_ERROR","Error":"Invalid Email"}),status=401)
         user = userData.query.filter_by(email=email).first()
         if not user:
-            return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"User Not Found"}),status=400)
+            return Response(json.dumps({"status":"401_AUTHENTICATION_ERROR","Error":"User Not Found"}),status=401)
         if check_password_hash(user.password, password):
             token = jwt.encode({'User_ID' : user.uid}, app.config['SECRET_KEY'])
             return Response(json.dumps({'token' : token,'User_ID' : user.uid}),status=200)
-        return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Wrong Password. Please try again."}),status=400)
+        return Response(json.dumps({"status":"401_AUTHENTICATION_ERROR","Error":"Wrong Password. Please try again."}),status=401)
 
 
 
