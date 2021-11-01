@@ -86,6 +86,8 @@ def advisor():
             if file.tell() == 0:
                 return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"No File Selected"}),status=400) 
             file.seek(0)
+            if not file.filename.lower().endswith(('.png', '.jpg', '.jpeg')):
+                return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Please upload an Image of format [png,jpg,jpeg]"}),status=400)
             advisor_name = request.form['advisor_name']
             file.save('static/images/'+aid+'_'+secure_filename(file.filename))        
             add_data = advisorData(aid=aid,name=advisor_name,image='static/images/'+aid+'_'+secure_filename(file.filename))
