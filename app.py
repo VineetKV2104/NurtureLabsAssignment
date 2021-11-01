@@ -76,8 +76,11 @@ def advisor():
         if request.method == 'POST':
             advisor_count = advisorData.query.count()
             aid = 'AID'+str(advisor_count+1)
-            if request.form['advisor_name'] == '':
+            advisor_name = request.form['advisor_name']
+            if advisor_name == '':
                 return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Please Fill All The Fields"}),status=400) 
+            if not advisor_name.isalpha():
+                return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Only letter from a-z and A-Z are allowed"}),status=400)
             file = request.files['advisor_img']
             file.seek(0, os.SEEK_END)
             if file.tell() == 0:
@@ -104,6 +107,8 @@ def userRegister():
             password = request.form['password']
             if name == '' or email == '' or password == '':
                 return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Please Provide All fields"}),status=400)
+            if not name.isalpha():
+                return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Only letter from a-z and A-Z are allowed"}),status=400)
             if not re.search(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)",email):
                 return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"Invalid Email"}),status=400)
             hashed_password = generate_password_hash(password, method='sha256')
