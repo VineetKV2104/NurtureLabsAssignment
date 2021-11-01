@@ -153,6 +153,9 @@ def showAdvisors(current_user,user_id):
         if not user:
             return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"User Id Missing"}),status=400)
         response = {}
+        advisor_count = advisorData.query.count()
+        if advisor_count == 0:
+            return Response(json.dumps({"status":"400_BAD_REQUEST","Error":"No Advisors Available"}),status=400)
         advisor_data = advisorData.query.all()
         for a in advisor_data:
             image_path = a.image # point to your image location
